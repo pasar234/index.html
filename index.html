@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Stok Pintar · Pro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background: #f8fafc; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        .header { background: #2563eb; color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: 700; z-index: 20; }
+        .menu-btn { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.8rem; width: 44px; height: 44px; border-radius: 12px; cursor: pointer; }
+        .menu-dropdown { position: absolute; top: 70px; right: 16px; background: white; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 260px; z-index: 1000; display: none; border: 1px solid #e2e8f0; overflow: hidden; }
+        .menu-dropdown.show { display: block; }
+        .menu-item { padding: 16px 20px; display: flex; align-items: center; gap: 14px; font-weight: 600; cursor: pointer; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; color: #334155; }
+        .menu-item:active { background: #f1f5f9; }
+
+        .tabs { display: flex; background: white; border-bottom: 1px solid #e2e8f0; overflow-x: auto; flex-shrink: 0; }
+        .tab { padding: 12px 20px; font-weight: 700; color: #64748b; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; }
+        .tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+
+        .main-content { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 100px; }
+        .product-item { background: white; border-radius: 18px; padding: 16px; margin-bottom: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        
+        .row-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+        .product-name { font-weight: 800; text-transform: uppercase; font-size: 0.9rem; color: #0f172a; flex: 1; }
+        
+        .stock-row { display: flex; align-items: center; background: #f1f5f9; border-radius: 10px; padding: 2px; border: 1px solid #e2e8f0; height: 32px; }
+        .btn-qty { border: none; background: white; color: #2563eb; font-weight: 800; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+        .stock-value { font-weight: 800; min-width: 30px; text-align: center; font-size: 0.85rem; }
+
+        .row-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+        .price-col { display: flex; flex-direction: column; gap: 4px; }
+        .price-display { color: #ef4444; font-weight: 800; font-size: 1.1rem; }
+        
+        .btn-group { display: flex; gap: 6px; }
+        .btn-lihat { background: #e0f2fe; color: #0369a1; border: none; padding: 4px 12px; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer; width: fit-content; }
+        .btn-edit { background: #fef9c3; color: #854d0e; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.7rem; cursor: pointer; }
+        .btn-hps { background: #fee2e2; color: #b91c1c; border: none; padding: 8px 12px; border-radius: 8px; font-weight: 700; font-size: 0.7rem; cursor: pointer; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 24px; border-radius: 28px; width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
+        
+        .blue-bold { color: #2563eb; font-weight: 900; font-size: 1.2rem; }
+        .btn-primary { width: 100%; padding: 16px; background: #2563eb; color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 1rem; cursor: pointer; }
+        
+        .form-label { font-weight: 700; font-size: 0.75rem; color: #64748b; margin-bottom: 4px; display: block; text-transform: uppercase; }
+        .form-input { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #e2e8f0; margin-bottom: 12px; font-size: 0.95rem; outline: none; }
+        
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; border-top: 2px solid #e2e8f0; height: 70px; z-index: 10; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; font-weight: 600; font-size: 0.8rem; gap: 4px; }
+        .nav-item.active { color: #2563eb; }
+        
+        .hidden { display: none !important; }
+        textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #e2e8f0; font-size: 0.85rem; resize: none; background: #f8fafc; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>⚡ STOK PINTAR PRO</div>
+    <button class="menu-btn" onclick="toggleMenu()">⋮</button>
+</div>
+
+<div id="menuDropdown" class="menu-dropdown">
+    <div class="menu-item" onclick="backupKeClipboard()">📋 Backup ke Clipboard</div>
+    <div class="menu-item" onclick="bukaRestoreClipboard()">📥 Restore Clipboard</div>
+    <div class="menu-item" onclick="eksporFile()">💾 Ekspor File (.db)</div>
+    <div class="menu-item" onclick="triggerImport()">📁 Impor File (.db)</div>
+    <input type="file" id="fileInput" class="hidden" accept=".db, .json" onchange="imporFile(event)">
+</div>
+
+<div id="tabs-container" class="tabs hidden"></div>
+
+<div class="main-content">
+    <div id="screen-add">
+        <div style="background: white; padding: 20px; border-radius: 24px; border: 1px solid #e2e8f0;">
+            <label class="form-label">KATEGORI</label>
+            <select id="f-kategori" class="form-input">
+                <option value="NARITA">NARITA</option>
+                <option value="VR">VR</option>
+                <option value="KUDUS">KUDUS</option>
+                <option value="LAIN">LAIN</option>
+            </select>
+            <label class="form-label">NAMA PRODUK</label>
+            <input type="text" id="f-nama" class="form-input" placeholder="Nama barang...">
+            <div style="display:flex; gap:10px;">
+                <div style="flex:1"><label class="form-label">MODAL</label><input type="number" id="f-beli" class="form-input" value="0"></div>
+                <div style="flex:1"><label class="form-label">ECER</label><input type="number" id="f-ecer" class="form-input" value="0"></div>
+                <div style="flex:1"><label class="form-label">GROSIR</label><input type="number" id="f-grosir" class="form-input" value="0"></div>
+            </div>
+            <button class="btn-primary" onclick="simpanProduk()">💾 SIMPAN PRODUK</button>
+        </div>
+    </div>
+
+    <div id="screen-list" class="hidden">
+        <input type="text" id="q-search" placeholder="🔍 Cari barang..." oninput="renderProduk()" style="width:100%; padding:12px; border-radius:30px; border:1.5px solid #e2e8f0; margin-bottom:15px; outline:none;">
+        <div id="list-render"></div>
+    </div>
+</div>
+
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <h3 style="margin-bottom:20px;">✏️ Edit Produk</h3>
+        <input type="hidden" id="e-id">
+        <label class="form-label">Nama Barang</label>
+        <input type="text" id="e-nama" class="form-input">
+        <label class="form-label">Harga Modal</label>
+        <input type="number" id="e-beli" class="form-input">
+        <div style="display:flex; gap:10px;">
+            <div style="flex:1"><label class="form-label">Harga Ecer</label><input type="number" id="e-ecer" class="form-input"></div>
+            <div style="flex:1"><label class="form-label">Harga Grosir</label><input type="number" id="e-grosir" class="form-input"></div>
+        </div>
+        <button class="btn-primary" onclick="updateProduk()">💾 SIMPAN PERUBAHAN</button>
+        <button class="btn-primary" onclick="tutupModal('editModal')" style="background:#f1f5f9; color:#475569; margin-top:10px;">BATAL</button>
+    </div>
+</div>
+
+<div id="clipboardModal" class="modal">
+    <div class="modal-content">
+        <h3>📥 Restore Data</h3>
+        <p style="font-size: 0.75rem; color: #64748b; margin: 10px 0;">Tempel kode backup Anda di bawah ini:</p>
+        <textarea id="txt-restore-clipboard" rows="10" placeholder="Paste data di sini..."></textarea>
+        <button class="btn-primary" style="margin-top:15px" onclick="prosesRestoreClipboard()">🔄 RESTORE SEKARANG</button>
+        <button class="btn-primary" onclick="tutupModal('clipboardModal')" style="background:#f1f5f9; color:#475569; margin-top:10px;">TUTUP</button>
+    </div>
+</div>
+
+<div id="detailModal" class="modal"><div class="modal-content" id="detail-content"></div></div>
+
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="navKe('add')" id="nav-add"><span>➕</span>Tambah</div>
+    <div class="nav-item" onclick="navKe('list')" id="nav-list"><span>📦</span>Stok</div>
+</div>
+
+<script>
+    let db = JSON.parse(localStorage.getItem('stok_pintar_db')) || [];
+    let curCat = "NARITA";
+    const cats = ["NARITA", "VR", "KUDUS", "LAIN"];
+
+    function save() { localStorage.setItem('stok_pintar_db', JSON.stringify(db)); }
+
+    function navKe(page) {
+        document.getElementById('screen-add').classList.toggle('hidden', page !== 'add');
+        document.getElementById('screen-list').classList.toggle('hidden', page !== 'list');
+        document.getElementById('tabs-container').classList.toggle('hidden', page !== 'list');
+        document.getElementById('nav-add').classList.toggle('active', page === 'add');
+        document.getElementById('nav-list').classList.toggle('active', page === 'list');
+        if(page === 'list') { renderTabs(); renderProduk(); }
+    }
+
+    function renderTabs() {
+        document.getElementById('tabs-container').innerHTML = cats.map(c => 
+            `<div class="tab ${c === curCat ? 'active' : ''}" onclick="setCat('${c}')">${c}</div>`
+        ).join('');
+    }
+
+    function setCat(c) { curCat = c; renderTabs(); renderProduk(); }
+
+    function renderProduk() {
+        const q = document.getElementById('q-search').value.toLowerCase();
+        const filtered = db.filter(i => i.kategori === curCat && i.nama.toLowerCase().includes(q));
+        
+        document.getElementById('list-render').innerHTML = filtered.map(item => `
+            <div class="product-item">
+                <div class="row-top">
+                    <div class="product-name">${item.nama}</div>
+                    <div class="stock-row">
+                        <button class="btn-qty" onclick="adjustStok(${item.id}, -1)">−</button>
+                        <span class="stock-value">${item.stok || 0}</span>
+                        <button class="btn-qty" onclick="adjustStok(${item.id}, 1)">+</button>
+                    </div>
+                </div>
+                <div class="row-bottom">
+                    <div class="price-col">
+                        <div class="price-display">${(item.ecer || 0).toLocaleString()}</div>
+                        <button class="btn-lihat" onclick="lihatDetail(${item.id})">👁️ Detail</button>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-edit" onclick="bukaEdit(${item.id})">✏️ Edit</button>
+                        <button class="btn-hps" onclick="hapusProduk(${item.id})">🗑️ Hapus</button>
+                    </div>
+                </div>
+            </div>
+        `).join('') || '<p style="text-align:center; color:#94a3b8; margin-top:40px;">Belum ada data</p>';
+    }
+
+    function bukaEdit(id) {
+        const p = db.find(x => x.id === id);
+        if(!p) return;
+        document.getElementById('e-id').value = p.id;
+        document.getElementById('e-nama').value = p.nama;
+        document.getElementById('e-beli').value = p.beli;
+        document.getElementById('e-ecer').value = p.ecer;
+        document.getElementById('e-grosir').value = p.grosir;
+        document.getElementById('editModal').classList.add('show');
+    }
+
+    function updateProduk() {
+        const id = parseFloat(document.getElementById('e-id').value);
+        const idx = db.findIndex(x => x.id === id);
+        if(idx !== -1) {
+            db[idx].nama = document.getElementById('e-nama').value;
+            db[idx].beli = parseInt(document.getElementById('e-beli').value) || 0;
+            db[idx].ecer = parseInt(document.getElementById('e-ecer').value) || 0;
+            db[idx].grosir = parseInt(document.getElementById('e-grosir').value) || 0;
+            save(); renderProduk(); tutupModal('editModal');
+            alert("✅ Diperbarui!");
+        }
+    }
+
+    function lihatDetail(id) {
+        const p = db.find(x => x.id === id);
+        if(!p) return;
+        document.getElementById('detail-content').innerHTML = `
+            <h3 style="margin-bottom:15px;">🔍 Detail Barang</h3>
+            <p><strong>Nama:</strong> ${p.nama}</p>
+            <p><strong>Modal:</strong> Rp ${(p.beli||0).toLocaleString()}</p>
+            <p><strong>Ecer:</strong> Rp ${(p.ecer||0).toLocaleString()}</p>
+            <p style="margin-top:10px;"><strong>Grosir:</strong><br><span class="blue-bold">Rp ${(p.grosir||0).toLocaleString()}</span></p>
+            <button class="btn-primary" style="margin-top:20px" onclick="tutupModal('detailModal')">OK</button>
+        `;
+        document.getElementById('detailModal').classList.add('show');
+    }
+
+    function simpanProduk() {
+        const nama = document.getElementById('f-nama').value;
+        if(!nama) return alert("Nama wajib diisi!");
+        db.push({ 
+            id: Date.now(), 
+            nama: nama, 
+            kategori: document.getElementById('f-kategori').value, 
+            beli: parseInt(document.getElementById('f-beli').value)||0, 
+            ecer: parseInt(document.getElementById('f-ecer').value)||0, 
+            grosir: parseInt(document.getElementById('f-grosir').value)||0, 
+            stok: 0 
+        });
+        save(); document.getElementById('f-nama').value = ""; alert("Tersimpan!"); navKe('list');
+    }
+
+    function adjustStok(id, v) {
+        const idx = db.findIndex(p => p.id === id);
+        if(idx !== -1) { db[idx].stok = Math.max(0, (db[idx].stok || 0) + v); save(); renderProduk(); }
+    }
+
+    function hapusProduk(id) { if(confirm("Hapus produk ini?")) { db = db.filter(p => p.id !== id); save(); renderProduk(); } }
+    
+    function toggleMenu() { document.getElementById('menuDropdown').classList.toggle('show'); }
+    window.onclick = function(event) { if (!event.target.matches('.menu-btn')) { document.getElementById('menuDropdown').classList.remove('show'); } }
+    
+    function tutupModal(id) { document.getElementById(id).classList.remove('show'); }
+
+    // --- LOGIKA BARU: CLIPBOARD & FILE ---
+
+    function backupKeClipboard() {
+        const dataStr = JSON.stringify(db);
+        navigator.clipboard.writeText(dataStr).then(() => {
+            alert("✅ Berhasil! Data sudah disalin ke clipboard.");
+        }).catch(() => {
+            const el = document.createElement('textarea');
+            el.value = dataStr; document.body.appendChild(el); el.select();
+            document.execCommand('copy'); document.body.removeChild(el);
+            alert("✅ Berhasil disalin!");
+        });
+    }
+
+    function bukaRestoreClipboard() {
+        document.getElementById('txt-restore-clipboard').value = "";
+        document.getElementById('clipboardModal').classList.add('show');
+    }
+
+    function prosesRestoreClipboard() {
+        const teks = document.getElementById('txt-restore-clipboard').value;
+        try {
+            const data = JSON.parse(teks);
+            if(Array.isArray(data)) {
+                if(confirm("Timpa data saat ini dengan data cadangan?")) {
+                    db = data; save(); renderProduk();
+                    tutupModal('clipboardModal'); alert("✅ Restore Berhasil!");
+                }
+            } else { alert("Format tidak valid!"); }
+        } catch(e) { alert("Data gagal dibaca!"); }
+    }
+
+    function eksporFile() {
+        const dataStr = JSON.stringify(db, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `stok_pintar_${new Date().getTime()}.db`;
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function triggerImport() { document.getElementById('fileInput').click(); }
+
+    function imporFile(event) {
+        const file = event.target.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if(Array.isArray(data)) {
+                    db = data; save(); renderProduk(); alert("✅ File berhasil dimuat!");
+                }
+            } catch(err) { alert("File rusak!"); }
+        };
+        reader.readAsText(file);
+    }
+
+    navKe('add');
+</script>
+</body>
+</html>
