@@ -1,18 +1,20 @@
 {
-  "name": "Toko Full App",
+  "name": "Toko Full - Manajemen Toko",
   "short_name": "TokoFull",
-  "description": "Aplikasi Toko Online Full Fitur",
+  "description": "Aplikasi manajemen stok dan toko",
   "start_url": "/tokofull/",
+  "scope": "/tokofull/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
-  "orientation": "any",
+  "background_color": "#8b5cf6",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait",
+  "categories": ["business", "productivity"],
   "icons": [
     {
-      "src": "icon-512x512.png",
-      "sizes": "512x512",
+      "src": "/tokofull/icon-192.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
