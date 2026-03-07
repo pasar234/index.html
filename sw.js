@@ -1,41 +1,61 @@
 const CACHE_NAME = 'tokofull-v1';
-const ASSETS_TO_CACHE = [
+const urlsToCache = [
   '/tokofull/',
   '/tokofull/index.html',
   '/tokofull/manifest.json',
-  '/tokofull/icon-512x512.png',
+  '/tokofull/icon-192.png',
   '/tokofull/offline.html'
 ];
 
-// Install Service Worker
-self.addEventListener('install', (event) => {
+// Install
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache))
+      .then(() => self.skipWaiting())
   );
 });
 
-// Aktivasi & Hapus Cache Lama
-self.addEventListener('activate', (event) => {
+// Activate
+self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then((keyList) => {
-      return Promise.all(keyList.map((key) => {
-        if (key !== CACHE_NAME) {
-          return caches.delete(key);
-        }
-      }));
-    })
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
   );
 });
 
-// Strategi Fetch (Network First, then Cache)
-self.addEventListener('fetch', (event) => {
+// Fetch
+self.addEventListener('fetch', event => {
   event.respondWith(
-    fetch(event.request).catch(() => {
-      return caches.match(event.request).then((response) => {
-        return response || caches.match('/tokofull/offline.html');
-      });
-    })
+    caches.match(event.request)
+      .then(response => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request)
+          .then(response => {
+            // Cache file baru
+            if (event.request.url.startsWith(self.location.origin)) {
+              const responseClone = response.clone();
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, responseClone);
+              });
+            }
+            return response;
+          })
+          .catch(() => {
+            // Jika offline, tampilkan offline.html
+            if (event.request.mode === 'navigate') {
+              return caches.match('/tokofull/offline.html');
+            }
+          });
+      })
   );
 });
