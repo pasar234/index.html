@@ -3,16 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Stok Pintar · Pro</title>
-    <!-- Link ke Manifest -->
-    <link rel="manifest" href="manifest.json">
-    <!-- Theme color untuk browser -->
-    <meta name="theme-color" content="#2563eb">
+    
+    <!-- Primary Meta Tags -->
+    <title>Toko Full · Manajemen Toko</title>
+    <meta name="title" content="Toko Full - Manajemen Toko Lengkap">
+    <meta name="description" content="Aplikasi manajemen stok, harga, dan produk untuk toko Anda">
+    <meta name="keywords" content="toko, stok, manajemen, inventory, harga, produk">
+    <meta name="author" content="Toko Full">
+    
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="/tokofull/manifest.json">
+    
+    <!-- Theme and Mobile Settings -->
+    <meta name="theme-color" content="#7c3aed">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Toko Full">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- iOS Icons -->
+    <link rel="apple-touch-icon" href="/tokofull/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/tokofull/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/tokofull/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="/tokofull/icon-192x192.png">
+    
+    <!-- Startup Image untuk iOS (opsional) -->
+    <link rel="apple-touch-startup-image" href="/tokofull/splash.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/tokofull/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/tokofull/icon-16x16.png">
+    <link rel="shortcut icon" href="/tokofull/favicon.ico">
+    
+    <!-- Facebook/Twitter Cards -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pasar234.github.io/tokofull/">
+    <meta property="og:title" content="Toko Full - Manajemen Toko">
+    <meta property="og:description" content="Aplikasi manajemen stok untuk toko Anda">
+    <meta property="og:image" content="https://pasar234.github.io/tokofull/icon-512x512.png">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://pasar234.github.io/tokofull/">
+    <meta name="twitter:title" content="Toko Full - Manajemen Toko">
+    <meta name="twitter:description" content="Aplikasi manajemen stok untuk toko Anda">
+    <meta name="twitter:image" content="https://pasar234.github.io/tokofull/icon-512x512.png">
+    
     <style>
+        /* CSS Anda tetap sama seperti sebelumnya, tambahkan: */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background: #f8fafc; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        .header { background: #2563eb; color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: 700; z-index: 20; }
+        .header { background: #7c3aed; color: white; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; font-weight: 700; z-index: 20; }
         .menu-btn { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 1.8rem; width: 44px; height: 44px; border-radius: 12px; cursor: pointer; }
         .menu-dropdown { position: absolute; top: 70px; right: 16px; background: white; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); width: 260px; z-index: 1000; display: none; border: 1px solid #e2e8f0; overflow: hidden; }
         .menu-dropdown.show { display: block; }
@@ -21,7 +63,7 @@
 
         .tabs { display: flex; background: white; border-bottom: 1px solid #e2e8f0; overflow-x: auto; flex-shrink: 0; }
         .tab { padding: 12px 20px; font-weight: 700; color: #64748b; border-bottom: 3px solid transparent; cursor: pointer; white-space: nowrap; }
-        .tab.active { color: #2563eb; border-bottom-color: #2563eb; }
+        .tab.active { color: #7c3aed; border-bottom-color: #7c3aed; }
 
         .main-content { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 100px; }
         .product-item { background: white; border-radius: 18px; padding: 16px; margin-bottom: 12px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
@@ -30,7 +72,7 @@
         .product-name { font-weight: 800; text-transform: uppercase; font-size: 0.9rem; color: #0f172a; flex: 1; }
         
         .stock-row { display: flex; align-items: center; background: #f1f5f9; border-radius: 10px; padding: 2px; border: 1px solid #e2e8f0; height: 32px; }
-        .btn-qty { border: none; background: white; color: #2563eb; font-weight: 800; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; font-size: 1rem; }
+        .btn-qty { border: none; background: white; color: #7c3aed; font-weight: 800; width: 26px; height: 26px; border-radius: 6px; cursor: pointer; font-size: 1rem; }
         .stock-value { font-weight: 800; min-width: 30px; text-align: center; font-size: 0.85rem; }
 
         .row-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
@@ -46,24 +88,29 @@
         .modal.show { display: flex; }
         .modal-content { background: white; padding: 24px; border-radius: 28px; width: 100%; max-width: 400px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
         
-        .blue-bold { color: #2563eb; font-weight: 900; font-size: 1.2rem; }
-        .btn-primary { width: 100%; padding: 16px; background: #2563eb; color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 1rem; cursor: pointer; }
+        .blue-bold { color: #7c3aed; font-weight: 900; font-size: 1.2rem; }
+        .btn-primary { width: 100%; padding: 16px; background: #7c3aed; color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 1rem; cursor: pointer; }
         
         .form-label { font-weight: 700; font-size: 0.75rem; color: #64748b; margin-bottom: 4px; display: block; text-transform: uppercase; }
         .form-input { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #e2e8f0; margin-bottom: 12px; font-size: 0.95rem; outline: none; }
         
         .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: white; display: flex; border-top: 2px solid #e2e8f0; height: 70px; z-index: 10; }
         .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #64748b; font-weight: 600; font-size: 0.8rem; gap: 4px; }
-        .nav-item.active { color: #2563eb; }
+        .nav-item.active { color: #7c3aed; }
         
         .hidden { display: none !important; }
         textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid #e2e8f0; font-size: 0.85rem; resize: none; background: #f8fafc; }
+        
+        /* Offline indicator */
+        .offline-badge { position: fixed; top: 70px; left: 0; right: 0; background: #f59e0b; color: white; text-align: center; padding: 4px; font-size: 0.75rem; font-weight: 700; z-index: 25; display: none; }
+        .offline-badge.show { display: block; }
     </style>
 </head>
 <body>
+    <div class="offline-badge" id="offlineBadge">📴 Anda sedang offline - Perubahan akan disimpan lokal</div>
 
 <div class="header">
-    <div>⚡ STOK PINTAR PRO</div>
+    <div>🏪 TOKO FULL</div>
     <button class="menu-btn" onclick="toggleMenu()">⋮</button>
 </div>
 
@@ -139,12 +186,40 @@
 </div>
 
 <script>
-    let db = JSON.parse(localStorage.getItem('stok_pintar_db')) || [];
+    // Deteksi online/offline
+    function updateOnlineStatus() {
+        const badge = document.getElementById('offlineBadge');
+        if (!navigator.onLine) {
+            badge.classList.add('show');
+        } else {
+            badge.classList.remove('show');
+        }
+    }
+    
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+
+    // Gunakan localStorage dengan prefix berbeda untuk menghindari bentrok data
+    const STORAGE_KEY = 'tokofull_db';  // BEDA dengan stripPwa!
+    
+    let db = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     let curCat = "NARITA";
     const cats = ["NARITA", "VR", "KUDUS", "LAIN"];
 
-    function save() { localStorage.setItem('stok_pintar_db', JSON.stringify(db)); }
+    function save() { 
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+        
+        // Coba sync ke server jika online (opsional)
+        if (navigator.onLine) {
+            // Implementasi sync ke server jika ada
+        }
+    }
 
+    // ... (semua fungsi lain tetap sama seperti sebelumnya)
+    // PASTIKAN semua fungsi menggunakan STORAGE_KEY di atas
+    // dan warna tema menggunakan #7c3aed (ungu) bukan #2563eb (biru)
+    
     function navKe(page) {
         document.getElementById('screen-add').classList.toggle('hidden', page !== 'add');
         document.getElementById('screen-list').classList.toggle('hidden', page !== 'list');
@@ -255,8 +330,7 @@
     
     function tutupModal(id) { document.getElementById(id).classList.remove('show'); }
 
-    // --- LOGIKA BARU: CLIPBOARD & FILE ---
-
+    // Fungsi backup/restore (gunakan STORAGE_KEY yang sama)
     function backupKeClipboard() {
         const dataStr = JSON.stringify(db);
         navigator.clipboard.writeText(dataStr).then(() => {
@@ -293,7 +367,7 @@
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
-        link.download = `stok_pintar_${new Date().getTime()}.db`;
+        link.download = `tokofull_${new Date().getTime()}.db`;
         link.click();
         URL.revokeObjectURL(url);
     }
@@ -315,16 +389,26 @@
         reader.readAsText(file);
     }
 
-    // --- REGISTRASI SERVICE WORKER ---
+    // Registrasi Service Worker dengan scope spesifik
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-            navigator.serviceWorker.register('sw.js').then(function(registration) {
-                console.log('ServiceWorker registered dengan scope: ', registration.scope);
+            navigator.serviceWorker.register('/tokofull/sw.js', {
+                scope: '/tokofull/'
+            }).then(function(registration) {
+                console.log('✅ ServiceWorker registered untuk TokoFull dengan scope:', registration.scope);
             }, function(err) {
-                console.log('ServiceWorker registration gagal: ', err);
+                console.log('❌ ServiceWorker registration gagal:', err);
             });
         });
     }
+
+    // Cek update PWA
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        // Tampilkan tombol install kustom jika mau
+    });
 
     navKe('add');
 </script>
